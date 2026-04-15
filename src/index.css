@@ -1,3 +1,9 @@
 /*
   Simple global reset so the app starts
- 
+  cleanly at the edge of the page.
+*/
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
