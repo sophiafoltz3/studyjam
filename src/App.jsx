@@ -1806,4 +1806,1010 @@ function App() {
                           <div
                             className="timer-display"
                             aria-live="polite"
-                            aria-l
+                            aria-label={`Time remaining: ${displayHours} hours, ${displayMinutes} minutes, and ${displaySeconds} seconds`}
+                          >
+                            <span>{displayHours}</span>
+                            <span className="colon">:</span>
+                            <span>{displayMinutes}</span>
+                            <span className="colon">:</span>
+                            <span>{displaySeconds}</span>
+                          </div>
+                        </div>
+
+                        <div className="timer-unit-row" aria-hidden="true">
+                          <span>Hours</span>
+                          <span>Minutes</span>
+                          <span>Seconds</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="timer-mode timer-mode-minimal">
+                        <div
+                          className="timer-display timer-display-minimal"
+                          aria-live="polite"
+                          aria-label={`Time remaining: ${displayHours} hours, ${displayMinutes} minutes, and ${displaySeconds} seconds`}
+                        >
+                          <span>{displayHours}</span>
+                          <span className="colon">:</span>
+                          <span>{displayMinutes}</span>
+                          <span className="colon">:</span>
+                          <span>{displaySeconds}</span>
+                        </div>
+
+                        <div
+                          className="timer-unit-row timer-unit-row-minimal"
+                          aria-hidden="true"
+                        >
+                          <span>Hours</span>
+                          <span>Minutes</span>
+                          <span>Seconds</span>
+                        </div>
+                      </div>
+                    )}
+
+                    <p className="session-label">{statusText}</p>
+                    <p className="focus-lock-note">
+                      {/* Browsers cannot truly lock a phone, so this is a product prototype version. */}
+                      Focus lock prototype: if you leave the app during a session,
+                      StudyJam marks you distracted and pauses the room.
+                    </p>
+
+                    <div className="button-row">
+                      <button
+                        className="primary-button"
+                        onClick={primaryAction.onClick}
+                        disabled={primaryAction.disabled}
+                      >
+                        {primaryAction.label}
+                      </button>
+
+                      {secondaryAction && (
+                        <button
+                          className="secondary-button"
+                          onClick={secondaryAction.onClick}
+                          disabled={secondaryAction.disabled}
+                        >
+                          {secondaryAction.label}
+                        </button>
+                      )}
+
+                      {tertiaryAction && (
+                        <button
+                          className="tertiary-button"
+                          onClick={tertiaryAction.onClick}
+                          disabled={tertiaryAction.disabled}
+                        >
+                          {tertiaryAction.label}
+                        </button>
+                      )}
+                    </div>
+                  </article>
+
+                  <aside className="focus-side-column">
+                    <motion.article
+                      className="dashboard-card glass-card"
+                      whileHover={{ y: -2 }}
+                    >
+                      <div className="section-head compact">
+                        <div>
+                          <p className="section-kicker">Active room</p>
+                          <h2 className="dashboard-title">Session preview</h2>
+                        </div>
+                      </div>
+
+                      <div className="active-room-card">
+                        <div className="active-room-top">
+                          <div className="active-room-icon">{currentRoom.icon}</div>
+
+                          <div>
+                            <h3 className="active-room-name">{currentRoom.name}</h3>
+                            <p className="active-room-meta">
+                              {currentRoom.genre} •{" "}
+                              {sessionMode === "private"
+                                ? "Private study"
+                                : `${visibleRoomPeople} studying`}
+                            </p>
+                          </div>
+                        </div>
+
+                        {sessionMode !== "private" && (
+                          <button
+                            type="button"
+                            className="participant-trigger"
+                            onClick={() => setIsStudyViewOpen(true)}
+                          >
+                            {visibleRoomPeople} people are studying right now
+                          </button>
+                        )}
+
+                        <p className="active-room-description">
+                          {currentRoom.description}
+                        </p>
+
+                        <div className="tag-row">
+                          {currentRoom.tags.map((tag) => (
+                            <span key={tag} className="soft-tag">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="mini-stat-grid">
+                          <div className="mini-stat-card">
+                            <span className="mini-stat-label">Energy</span>
+                            <strong>{currentRoom.energy}</strong>
+                          </div>
+
+                          <div className="mini-stat-card">
+                            <span className="mini-stat-label">Best for</span>
+                            <strong>{currentRoom.bestFor}</strong>
+                          </div>
+
+                          <div className="mini-stat-card">
+                            <span className="mini-stat-label">Status</span>
+                            <strong>
+                              {sessionMode === "private" ? "Private" : roomStatusLabel}
+                            </strong>
+                          </div>
+
+                          <div className="mini-stat-card">
+                            <span className="mini-stat-label">Invites</span>
+                            <strong>
+                              {inviteAccess ? "Allowed" : "Closed"}
+                            </strong>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.article>
+
+                    <motion.article
+                      className="dashboard-card"
+                      whileHover={{ y: -2 }}
+                    >
+                      <div className="section-head compact">
+                        <div>
+                          <p className="section-kicker">Audio vibe</p>
+                          <h2 className="dashboard-title">Music player</h2>
+                        </div>
+                      </div>
+
+                      <div className="music-player-card">
+                        <div className="music-player-top">
+                          <div className="music-art">{currentRoom.icon}</div>
+
+                          <div>
+                            <h3 className="active-room-name">{nowPlaying.title}</h3>
+                            <p className="active-room-meta">
+                              {nowPlaying.artist} • added by {nowPlaying.addedBy}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="music-progress-bar">
+                          <div
+                            className="music-progress-fill"
+                            style={{
+                              width: `${
+                                selectedRoom === "Silent Session" ? 0 : musicProgress
+                              }%`,
+                            }}
+                          />
+                        </div>
+
+                        <div className="music-player-controls">
+                          <button
+                            type="button"
+                            className={`icon-button feedback-icon-button ${
+                              isTrackDisliked ? "active dislike" : ""
+                            }`}
+                            onClick={handleToggleDislikedTrack}
+                            disabled={selectedRoom === "Silent Session"}
+                            aria-label="Recommend less like this song"
+                          >
+                            ⊘
+                          </button>
+
+                          <button
+                            type="button"
+                            className="icon-button"
+                            onClick={() =>
+                              setMusicProgress((prev) => Math.max(prev - 10, 0))
+                            }
+                            disabled={selectedRoom === "Silent Session"}
+                          >
+                            ⏮
+                          </button>
+
+                          <button
+                            type="button"
+                            className="icon-button play-button"
+                            onClick={() => setMusicPlaying((prev) => !prev)}
+                            disabled={
+                              selectedRoom === "Silent Session" ||
+                              sessionState === "break" ||
+                              sessionState === "distracted"
+                            }
+                          >
+                            {selectedRoom === "Silent Session"
+                              ? "—"
+                              : musicPlaying
+                              ? "⏸"
+                              : "▶"}
+                          </button>
+
+                          <button
+                            type="button"
+                            className="icon-button"
+                            onClick={() =>
+                              setMusicProgress((prev) => Math.min(prev + 10, 100))
+                            }
+                            disabled={selectedRoom === "Silent Session"}
+                          >
+                            ⏭
+                          </button>
+
+                          <button
+                            type="button"
+                            className={`icon-button feedback-icon-button ${
+                              isTrackLiked ? "active like" : ""
+                            }`}
+                            onClick={handleToggleLikedTrack}
+                            disabled={selectedRoom === "Silent Session"}
+                            aria-label="Like this song"
+                          >
+                            {isTrackLiked ? "♥" : "♡"}
+                          </button>
+                        </div>
+
+                        <div className="queue-panel">
+                          <div className="section-head compact">
+                            <div>
+                              <p className="section-kicker">Room jam</p>
+                              <h2 className="dashboard-title">Song queue</h2>
+                            </div>
+                          </div>
+
+                          <div className="queue-list">
+                            {roomQueue.slice(0, 4).map((song, index) => (
+                              <div
+                                key={`${song.title}-${song.artist}-${index}`}
+                                className={`queue-row ${index === 0 ? "playing" : ""}`}
+                              >
+                                <div className="queue-index">
+                                  {index === 0 ? "▶" : index + 1}
+                                </div>
+                                <div>
+                                  <p className="queue-title">{song.title}</p>
+                                  <p className="queue-meta">
+                                    {song.artist} • {song.addedBy}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="queue-form">
+                            <input
+                              className="text-input"
+                              value={queueSong.title}
+                              placeholder="Song title"
+                              onChange={(event) =>
+                                setQueueSong((prev) => ({
+                                  ...prev,
+                                  title: event.target.value,
+                                }))
+                              }
+                            />
+                            <input
+                              className="text-input"
+                              value={queueSong.artist}
+                              placeholder="Artist"
+                              onChange={(event) =>
+                                setQueueSong((prev) => ({
+                                  ...prev,
+                                  artist: event.target.value,
+                                }))
+                              }
+                            />
+                            <button
+                              type="button"
+                              className="secondary-button"
+                              onClick={handleAddQueueSong}
+                            >
+                              Add to jam
+                            </button>
+                          </div>
+                        </div>
+
+                        <p className="music-caption">
+                          {selectedRoom === "Silent Session"
+                            ? "This room uses no music playback."
+                            : isTrackLiked
+                            ? `${nowPlaying.title} is in your liked songs now.`
+                            : isTrackDisliked
+                            ? `We will recommend less music like ${nowPlaying.title}.`
+                            : sessionState === "distracted"
+                            ? "Music paused because focus was lost."
+                            : sessionState === "break"
+                            ? "Music paused while you’re on break."
+                            : "Use the heart to save songs you love or dislike to tune your room mix."}
+                        </p>
+                      </div>
+                    </motion.article>
+
+                    <motion.article
+                      className="dashboard-card"
+                      whileHover={{ y: -2 }}
+                    >
+                      <div className="section-head compact">
+                        <div>
+                          <p className="section-kicker">Daily goals</p>
+                          <h2 className="dashboard-title">Focus goal</h2>
+                        </div>
+                      </div>
+
+                      <div className="goal-card">
+                        <div className="goal-top">
+                          <div>
+                            <p className="goal-value">
+                              {focusGoalCompleted} of {focusGoalTarget}
+                            </p>
+                            <p className="goal-label">sessions completed today</p>
+                          </div>
+
+                          <span className="history-duration">{goalPercent}%</span>
+                        </div>
+
+                        <div className="goal-progress-bar">
+                          <div
+                            className="goal-progress-fill"
+                            style={{ width: `${goalPercent}%` }}
+                          />
+                        </div>
+
+                        <button
+                          type="button"
+                          className="secondary-button full-width-button"
+                          onClick={handleMarkGoalProgress}
+                          disabled={focusGoalCompleted >= focusGoalTarget}
+                        >
+                          Mark one as done
+                        </button>
+                      </div>
+                    </motion.article>
+
+                  </aside>
+                </div>
+              </div>
+            </motion.section>
+          )}
+
+          {activePage === "rooms" && (
+            <motion.section key="rooms" className="page-section" {...pageMotion}>
+              <article className="dashboard-card featured-room-card">
+                <div className="featured-room-content">
+                  <div>
+                    <p className="section-kicker">Recommended for you</p>
+                    <h2 className="dashboard-title">{recommendedRoom.name}</h2>
+                    <p className="dashboard-subtext">
+                      Best match based on your quiet study style, love of lo-fi,
+                      and consistent evening session habits.
+                    </p>
+
+                    <div className="tag-row">
+                      {recommendedRoom.tags.map((tag) => (
+                        <span key={tag} className="soft-tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="primary-button"
+                    onClick={() => {
+                      handleOpenRoomSetup(recommendedRoom.name);
+                    }}
+                  >
+                    Set time and join
+                  </button>
+                </div>
+              </article>
+
+              <article className="dashboard-card create-room-card">
+                <div className="section-heading-row">
+                  <div>
+                    <p className="section-kicker">Create your own</p>
+                    <h2 className="dashboard-title">Start a custom study session</h2>
+                    <p className="dashboard-subtext">
+                      Build a private or invite-ready room for your own focus goal.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => setIsCreatingRoom((prev) => !prev)}
+                  >
+                    {isCreatingRoom ? "Close creator" : "Create room"}
+                  </button>
+                </div>
+
+                {isCreatingRoom && (
+                  <div className="create-room-form">
+                    <input
+                      className="text-input"
+                      value={newRoom.name}
+                      placeholder="Room name"
+                      onChange={(event) =>
+                        setNewRoom((prev) => ({ ...prev, name: event.target.value }))
+                      }
+                    />
+                    <input
+                      className="text-input"
+                      value={newRoom.genre}
+                      placeholder="Music vibe"
+                      onChange={(event) =>
+                        setNewRoom((prev) => ({ ...prev, genre: event.target.value }))
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={handleCreateRoom}
+                    >
+                      Create and set time
+                    </button>
+                  </div>
+                )}
+              </article>
+
+              <article className="dashboard-card rooms-card">
+                <div className="section-heading-row">
+                  <div>
+                    <p className="section-kicker">Music-based rooms</p>
+                    <h2 className="dashboard-title">Choose a study room</h2>
+                    <p className="dashboard-subtext">
+                      Pick the vibe that helps you focus, then start your session
+                      inside that room.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="room-grid">
+                  {allStudyRooms.map((room) => (
+                    <motion.button
+                      key={room.name}
+                      type="button"
+                      className={`room-card ${
+                        selectedRoom === room.name ? "selected" : ""
+                      }`}
+                      onClick={() => handleOpenRoomSetup(room.name)}
+                      whileHover={{ y: -4 }}
+                      whileTap={{ scale: 0.995 }}
+                    >
+                      <div className="room-card-top">
+                        <span className="room-icon">{room.icon}</span>
+                        <span className="room-people">{room.people} studying</span>
+                      </div>
+
+                      <h3 className="room-name">{room.name}</h3>
+                      <p className="room-genre">{room.genre}</p>
+                      <p className="room-description">{room.description}</p>
+                      <p className="room-track">
+                        Now playing: {room.track} by {room.artist}
+                      </p>
+
+                      <div className="room-meta-grid">
+                        <div>
+                          <span className="room-meta-label">Energy</span>
+                          <strong>{room.energy}</strong>
+                        </div>
+                        <div>
+                          <span className="room-meta-label">Best for</span>
+                          <strong>{room.bestFor}</strong>
+                        </div>
+                      </div>
+
+                      <div className="tag-row">
+                        {room.tags.map((tag) => (
+                          <span key={tag} className="soft-tag">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </article>
+            </motion.section>
+          )}
+
+          {activePage === "social" && (
+            <motion.section key="social" className="page-section" {...pageMotion}>
+              <article className="dashboard-card">
+                <div className="section-heading-row">
+                  <div>
+                    <p className="section-kicker">Smart matching</p>
+                    <h2 className="dashboard-title">Compatibility suggestions</h2>
+                    <p className="dashboard-subtext">
+                      Mock matching based on focus habits, music preference, and
+                      study style.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="group-list">
+                  {suggestedGroups.map((group) => (
+                    <motion.div
+                      key={group.name}
+                      className="group-card"
+                      whileHover={{ y: -2 }}
+                    >
+                      <div className="group-card-top">
+                        <div>
+                          <h3 className="group-name">{group.name}</h3>
+                          <p className="group-reason">{group.reason}</p>
+                        </div>
+
+                        <div className="match-badge">{group.match} match</div>
+                      </div>
+
+                      <div className="social-actions">
+                        <button type="button" className="join-button">
+                          Join group
+                        </button>
+
+                        <button
+                          type="button"
+                          className="tertiary-button"
+                          onClick={() => handleOpenInvite(group.name)}
+                        >
+                          Invite to next session
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="dashboard-card">
+                <div className="section-heading-row">
+                  <div>
+                    <p className="section-kicker">Study buddies</p>
+                    <h2 className="dashboard-title">People you may work well with</h2>
+                    <p className="dashboard-subtext">
+                      Productive connections without making the app feel like social
+                      media.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="buddy-grid">
+                  {suggestedBuddies.map((buddy) => (
+                    <motion.div
+                      key={buddy.handle}
+                      className="buddy-card"
+                      whileHover={{ y: -2 }}
+                    >
+                      <div className="buddy-top">
+                        <div className="buddy-avatar">{buddy.avatar}</div>
+
+                        <div>
+                          <h3 className="buddy-name">{buddy.name}</h3>
+                          <p className="buddy-handle">{buddy.handle}</p>
+                        </div>
+                      </div>
+
+                      <div className="buddy-badge">{buddy.compatibility} compatible</div>
+
+                      <p className="buddy-note">{buddy.note}</p>
+                      <p className="buddy-status">{buddy.status}</p>
+
+                      <div className="social-actions">
+                        <button type="button" className="join-button">
+                          Add study buddy
+                        </button>
+                        <button
+                          type="button"
+                          className="tertiary-button"
+                          onClick={() => handleOpenInvite(buddy.name)}
+                        >
+                          Send invite
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </article>
+
+              <article className="dashboard-card">
+                <div className="section-heading-row">
+                  <div>
+                    <p className="section-kicker">Nearby discovery</p>
+                    <h2 className="dashboard-title">Who else uses StudyJam nearby</h2>
+                    <p className="dashboard-subtext">
+                      Safety comes first, so this only shows broad shared areas and
+                      only for people who opt in.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="buddy-strip nearby-strip">
+                  {nearbyUsers.map((spot) => (
+                    <div key={spot.name} className="buddy-strip-card nearby-card">
+                      <div className="buddy-strip-avatar">{spot.avatar}</div>
+                      <div>
+                        <p className="buddy-name">{spot.name}</p>
+                        <p className="buddy-status">{spot.detail}</p>
+                        <p className="buddy-note nearby-note">{spot.note}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </motion.section>
+          )}
+
+          {activePage === "profile" && (
+            <motion.section key="profile" className="page-section" {...pageMotion}>
+              <div className="dashboard-grid single-column">
+                <article className="dashboard-card profile-card">
+                  <div className="profile-top">
+                    {isProfileEditing
+                      ? renderEditableProfileAvatar()
+                      : renderProfileAvatar("profile-avatar")}
+
+                  <div>
+                      <p className="section-kicker">Personalization</p>
+                      <h2 className="dashboard-title">Your profile</h2>
+                      <p className="profile-name">{userProfile.name}</p>
+                      <p className="profile-username">{userProfile.username}</p>
+                      <button
+                        type="button"
+                        className="profile-inline-link"
+                        onClick={() => setIsBuddyListOpen(true)}
+                      >
+                        {studyBuddies.length} study buddies
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="profile-form-actions">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => setIsProfileEditing((prev) => !prev)}
+                    >
+                      {isProfileEditing ? "Done editing" : "Edit profile"}
+                    </button>
+                  </div>
+
+                  {isProfileEditing ? (
+                    <div className="profile-form-grid">
+                      <label className="field-group">
+                        <span className="field-label">Display name</span>
+                        <input
+                          className="text-input"
+                          value={userProfile.name}
+                          onChange={(e) => handleProfileInput("name", e.target.value)}
+                        />
+                      </label>
+
+                      <label className="field-group">
+                        <span className="field-label">Username</span>
+                        <input
+                          className="text-input"
+                          value={userProfile.username}
+                          onChange={(e) =>
+                            handleProfileInput("username", e.target.value)
+                          }
+                        />
+                      </label>
+
+                      <label className="field-group">
+                        <span className="field-label">Favorite genre</span>
+                        <input
+                          className="text-input"
+                          value={userProfile.favoriteGenre}
+                          onChange={(e) =>
+                            handleProfileInput("favoriteGenre", e.target.value)
+                          }
+                        />
+                      </label>
+
+                      <label className="field-group">
+                        <span className="field-label">Study style</span>
+                        <input
+                          className="text-input"
+                          value={userProfile.studyStyle}
+                          onChange={(e) =>
+                            handleProfileInput("studyStyle", e.target.value)
+                          }
+                        />
+                      </label>
+
+                      <label className="field-group">
+                        <span className="field-label">Best focus window</span>
+                        <input
+                          className="text-input"
+                          value={userProfile.bestFocusWindow}
+                          onChange={(e) =>
+                            handleProfileInput("bestFocusWindow", e.target.value)
+                          }
+                        />
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="profile-stats">
+                      <div className="stat-pill">
+                        <span className="stat-label">Favorite genre</span>
+                        <strong>{userProfile.favoriteGenre}</strong>
+                      </div>
+
+                      <div className="stat-pill">
+                        <span className="stat-label">Study style</span>
+                        <strong>{userProfile.studyStyle}</strong>
+                      </div>
+
+                      <div className="stat-pill">
+                        <span className="stat-label">Focus streak</span>
+                        <strong>{userProfile.streak} days</strong>
+                      </div>
+
+                      <div className="stat-pill">
+                        <span className="stat-label">Sessions</span>
+                        <strong>{userProfile.sessionsCompleted}</strong>
+                      </div>
+                    </div>
+                  )}
+                </article>
+
+                <article className="dashboard-card">
+                  <p className="section-kicker">Music profile</p>
+                  <h2 className="dashboard-title">Liked songs</h2>
+                  <p className="dashboard-subtext">
+                    Songs you heart in rooms show up here so your taste feels remembered.
+                  </p>
+
+                  <div className="saved-song-list">
+                    {likedSongs.length ? (
+                      likedSongs.map((song) => (
+                        <div key={song.key} className="saved-song-row">
+                          <div className="saved-song-icon">♡</div>
+                          <div>
+                            <p className="saved-song-title">{song.title}</p>
+                            <p className="saved-song-meta">{song.artist}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="dashboard-subtext">
+                        Heart a song in any room and it will show up here.
+                      </p>
+                    )}
+                  </div>
+
+                  {mutedSongs.length > 0 && (
+                    <div className="muted-song-block">
+                      <p className="mini-stat-label">Recommend less</p>
+                      <div className="saved-song-list compact">
+                        {mutedSongs.map((song) => (
+                          <div key={song.key} className="saved-song-row muted">
+                            <div className="saved-song-icon">−</div>
+                            <div>
+                              <p className="saved-song-title">{song.title}</p>
+                              <p className="saved-song-meta">{song.artist}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </article>
+
+                <article className="dashboard-card">
+                  <p className="section-kicker">Achievements</p>
+                  <h2 className="dashboard-title">Focus badges</h2>
+                  <p className="dashboard-subtext">
+                    A clean reward system that makes consistency feel meaningful
+                    without turning the app into social media.
+                  </p>
+
+                  <div className="achievement-grid">
+                    {achievements.map((achievement) => (
+                      <div
+                        key={achievement.title}
+                        className={`achievement-card ${
+                          achievement.earned ? "earned" : "locked"
+                        }`}
+                      >
+                        <div className="achievement-icon">{achievement.icon}</div>
+                        <div>
+                          <h3 className="achievement-title">{achievement.title}</h3>
+                          <p className="achievement-description">
+                            {achievement.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+
+                <article className="dashboard-card">
+                  <p className="section-kicker">Daily planning</p>
+                  <h2 className="dashboard-title">Checklist</h2>
+                  <p className="dashboard-subtext">
+                    Add goals for the day and check them off while you study.
+                  </p>
+
+                  <div className="queue-form checklist-form">
+                    <input
+                      className="text-input"
+                      value={goalInput}
+                      placeholder="Add a goal for today"
+                      onChange={(event) => setGoalInput(event.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={handleAddGoal}
+                    >
+                      Add goal
+                    </button>
+                  </div>
+
+                  <div className="checklist">
+                    {dailyChecklist.map((goal) => (
+                      <button
+                        key={goal.id}
+                        type="button"
+                        className={`checklist-item ${goal.done ? "done" : ""}`}
+                        onClick={() => handleToggleGoal(goal.id)}
+                      >
+                        <span className="checkmark">{goal.done ? "✓" : ""}</span>
+                        <span>{goal.text}</span>
+                      </button>
+                    ))}
+                  </div>
+                </article>
+              </div>
+            </motion.section>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {isStudyViewOpen && sessionMode !== "private" && (
+            <motion.div
+              className="modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="modal-card study-view-modal"
+                initial={{ opacity: 0, y: 18, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                transition={{ duration: 0.22 }}
+              >
+                <div className="section-head compact">
+                  <div>
+                    <p className="section-kicker">Live room</p>
+                    <h2 className="dashboard-title">People in {currentRoom.name}</h2>
+                  </div>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => setIsStudyViewOpen(false)}
+                  >
+                    Back to timer
+                  </button>
+                </div>
+
+                <div className="live-room-list">
+                  {currentParticipantProfiles.map((person) => (
+                    <div key={person.name} className="live-room-person">
+                      <div
+                        className={`live-room-avatar tone-${person.avatarTone}`}
+                        aria-hidden="true"
+                      >
+                        {person.avatarValue}
+                      </div>
+
+                      <div className="live-room-copy">
+                        <p className="live-room-name">{person.name}</p>
+                        <p className="live-room-status">{person.status}</p>
+                      </div>
+
+                      <span className="live-room-pill">In room</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <RoomSetupModal
+          isOpen={isRoomSetupOpen}
+          onClose={() => setIsRoomSetupOpen(false)}
+          room={roomSetupRoom}
+          setupHours={hours}
+          setupMinutes={minutes}
+          onSetupHours={setHours}
+          onSetupMinutes={setMinutes}
+          sessionMode={sessionMode}
+          onSessionMode={(mode) => {
+            setSessionMode(mode);
+            if (mode === "private") {
+              setVisibilityMode("private");
+            }
+          }}
+          inviteAccess={inviteAccess}
+          onInviteAccess={setInviteAccess}
+          onStart={handleStartRoomSession}
+        />
+
+        <SessionInviteModal
+        isOpen={isInviteModalOpen}
+        onClose={() => setIsInviteModalOpen(false)}
+        buddyName={inviteTarget}
+        selectedRoom={selectedRoom}
+        hours={hours}
+        minutes={minutes}
+        seconds={seconds}
+      />
+
+      <AnimatePresence>
+        {isBuddyListOpen && (
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="modal-card buddy-list-modal"
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              transition={{ duration: 0.22 }}
+            >
+              <div className="section-head compact">
+                <div>
+                  <p className="section-kicker">Your people</p>
+                  <h2 className="dashboard-title">Study buddies</h2>
+                </div>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setIsBuddyListOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="buddy-list-sheet">
+                {studyBuddies.map((buddy) => (
+                  <div key={`profile-${buddy.handle}`} className="buddy-list-row">
+                    <div className="buddy-strip-avatar">{buddy.avatar}</div>
+                    <div className="buddy-list-copy">
+                      <p className="buddy-name">{buddy.name}</p>
+                      <p className="buddy-handle">{buddy.handle}</p>
+                    </div>
+                    <p className="buddy-status">{buddy.status}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+    </section>
+  </main>
+);
+}
+
+export default App;
