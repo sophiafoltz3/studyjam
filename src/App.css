@@ -2380,50 +2380,53 @@ button:focus-visible,
 
 @media (max-width: 640px) {
   .app {
-    padding: 12px 8px;
+    padding: 10px 6px;
   }
 
   .app-shell {
-    padding: 16px 12px;
-    border-radius: 20px;
+    padding: 12px 10px;
+    border-radius: 18px;
   }
 
   .eyebrow {
-    font-size: 0.7rem;
+    font-size: 0.64rem;
+    letter-spacing: 0.12em;
   }
 
   .title {
-    margin-top: 10px;
-    font-size: clamp(2.15rem, 8vw, 2.8rem);
+    margin-top: 8px;
+    gap: 8px;
+    font-size: clamp(1.85rem, 7vw, 2.45rem);
   }
 
   .subtitle {
-    margin-top: 10px;
-    font-size: 0.94rem;
-    line-height: 1.45;
+    margin-top: 8px;
+    max-width: 18ch;
+    font-size: 0.86rem;
+    line-height: 1.35;
   }
 
   .page-section {
-    margin-top: 20px;
+    margin-top: 16px;
   }
 
   .page-tabs {
     width: 100%;
     justify-content: stretch;
     flex-wrap: nowrap;
-    margin-top: 22px;
-    padding: 4px;
+    margin-top: 16px;
+    padding: 3px;
     gap: 4px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-radius: 28px;
+    border-radius: 24px;
   }
 
   .page-tab {
     flex: unset;
     text-align: center;
-    padding: 10px 12px;
-    font-size: 0.96rem;
+    padding: 8px 10px;
+    font-size: 0.88rem;
   }
 
   .time-picker {
@@ -2466,17 +2469,20 @@ button:focus-visible,
   }
 
   .topbar-actions {
-    margin-top: 12px;
-    justify-content: stretch;
+    margin-top: 10px;
+    justify-content: center;
   }
 
   .settings-menu {
-    width: 100%;
+    width: auto;
   }
 
   .settings-trigger {
-    width: 100%;
+    width: auto;
+    min-height: 40px;
+    padding: 8px 14px;
     justify-content: center;
+    font-size: 0.94rem;
   }
 
   .settings-popover {
@@ -2508,8 +2514,45 @@ button:focus-visible,
 
   .hero-card,
   .dashboard-card {
-    padding: 18px;
-    border-radius: 24px;
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .profile-card {
+    gap: 14px;
+  }
+
+  .profile-top {
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .profile-avatar,
+  .buddy-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    font-size: 1.25rem;
+  }
+
+  .profile-name {
+    margin-top: 4px;
+    font-size: 0.92rem;
+  }
+
+  .profile-username {
+    font-size: 0.84rem;
+  }
+
+  .profile-inline-link {
+    margin-top: 8px;
+    font-size: 0.88rem;
+  }
+
+  .profile-form-actions .secondary-button {
+    width: fit-content;
+    min-height: 42px;
+    padding: 10px 16px;
   }
 
   .modal-overlay {
